@@ -1,0 +1,96 @@
+httpAddress=":18888"
+Language= "zh-cn"
+Active = "subMail"
+[chain]
+    #RPCUrl="https://mainnet.ylem.network"
+    #RPCChainID = 181866
+    #RPCUrl="http://127.0.0.1:8545"
+    #RPCChainID = 5777
+    #RPCUrl="https://gxl.chain199.com"
+    #RPCChainID = 181867
+    RPCUrl="http://8.218.21.155:6988"
+    RPCChainID = 181869
+    #AbiUrl = "http://8.218.26.42:19998/abi/abiControl"
+    AbiUrl = "http://8.218.21.155:19997/abi/abiControl"
+    TransCoinUrl="http://8.218.21.155:19997/trans/transYlem"
+    #AbiUrl = "http://127.0.0.1:19998/abi/abiControl"
+    #TransCoinUrl="http://127.0.0.1:19998/trans/transYlem"
+    FileFee = 0.01
+    Profit = 0.01
+    BaseAddress = "0x362233766c3F6887F823b0012a0A1FFaDEDe7978"
+    BaseAddressKey="76a97400579a2b1a64ad6394e32812717befa0abdc7b6576ae227c7cd9bd70cb"
+[database]
+    dsn="root:*%#%g2l45&&36S@tcp(52.77.114.205:3306)/higgs_cn?charset=utf8"
+[redis]
+    Addr="116.63.172.191:6379"
+    #Addr="127.0.0.1:6379"
+    Password="gxl"
+    Debug=1
+[email]
+    FromAddr="walkersan@163.com"
+    Key="FWREPZRCFKDBFLZX"
+    Subject="验证码"
+    Content="<h1>您本次的操作验证码为 ?code?,请勿告知他人</h1>"
+[logs]
+    LogPath="/Users/sanzhen/Developer/goland/chain/logs/"
+    LogLevel="info"
+    OutPut="stdout"
+[smsModel]
+[smsModel.subMail]
+    #Id= 32611
+    Id= 98109
+    Global = 0
+    #Key= "fc1e7a400a21516bfc4bb7a75990701e"
+    Key= "f68d79fe8cfc5b3c14763977008e256f"
+    EndPoint="https://api.mysubmail.com/message/send"
+[smsModel.subMailGlobal]
+    Id= 62951
+    Global = 0
+    Key= "b7dfca38a7080a78dfeec0c6b9b6b40b"
+    EndPoint="https://api-v4.mysubmail.com/internationalsms/send"
+[smsContent]
+[smsContent.login]
+    # 短信头名称，必填
+    SignName = "【百市通】/【Storage】"
+    # 短信内容，需要替换的字符用?code?代替，除阿里云外必填
+#    Content= "您本次的验证码为?code?。验证码有效期5分钟，切勿转发或告知他人。/Your verification code is ?code? ."
+    Content= "您本次的验证码为?code?。验证码有效期5分钟。/Your verification code is ?code? ."
+    # 模板编号，阿里云必填
+    TemplateCode= 3603232
+[aliOss]
+    Endpoint= "oss-cn-shanghai.aliyuncs.com"
+    Id= ""
+    Secret= ""
+    Bucket= "glass-data-test"
+[ipfs]
+    UploadUrl="https://api.nft.storage/upload"
+    Authorization="Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweERDMmVkRTJBOTdEOTdEMzM4QjI5OWU4YTVlOTYyZkU5NUU0MTMyNzAiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY5OTM0NDgzOTU1OCwibmFtZSI6ImxpdHRsZSJ9.esQ2uBQqsiLpkVf-HSQQ3f9Cao71f3Nptadfl0lnODk"
+    IpfsUrl = "https://ipfs.io/ipfs/"
+[alipay]
+    Appid="2021003120630657"
+    PrivateKey= "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCaB32PM55+oX20YbWGvRp9xiLnt0P7GHZuRCp9ObJm+i7k16N65nnkWQU2UQE4B3Rm97Krd5GWvNyc11B6fVTS/8lHQEkb9lnwhAzyVUGWLl1Q3t0/23qNIpXDvYGis8ffSiB5bL8iPStJuyLADecz640ywTx23FXcKClQpZ75FkWhESoaP7iB6+ULxDgbdjakSkcZZmllr9nO1shQNs/SF+3sfa1JBnrcNyjzdMV8n7VfDtbV3HeE6NWPizNY2odZZlt3A4TsBCEmNgD46+sIygPb88V9k61B2Qb52cdgU8YVk1Q7E7b7xRGsweIuC75/HEqbGanNHtIA4tCnoGcDAgMBAAECggEAbjCVnnBrHmQhLX4JAs8duISaS/JLa8JgVxnk25j/C7RG/+dUSIPBB563n9fra03J9C+XXhs3yAJsQLe4Fyi6Gghq0dInex2N0gZlzKc5OFsK3uPQm/JDhdwMD+/uYZsDjbXV7YfiZHgmE6UQgxxvHjGQ3ZJn0xBlTA5fIBab18z+hsAPWL/dD0ZI34+bpvY5iMh6ul/heCKshCPZCjJwUD9Nd9IfFFUH/YKyZSEF8PG4u7l5cpie5c9SvPOAucdftszq4SJuuUH2nmO7/TzAN6pKvpGYxrAWKw3g/WqCW3gBRlz4XKGMYy2sqPiY6wRomNStu7BhpHGp/A81N4wwgQKBgQDSOyaKPNbcTN693Nm5dOW4aWHeivqxkdbEcwOqWAKyEOyqQzvghvxzuKU/tqC2XWHv/FvfgWYDQ5zuEXownouX237OXtnwEnZ7jRZWm3dsWUIrngAVi5WG9ydRbmu+hBn2dwtNUdOVhkIqxprdm7772czjc9aBL774i2n2CPY/EQKBgQC7kAiwMpgogMc3iD5edvDEII5yi0LrcCR0IkVy8TeecyH48olKuWlME9n8w7jv/NflEbM4yZXgF+U54C+7YzooDGobukg0GGLyt593g3n4E5I6WQLe1i8topUpnMCpL217q7ulAqnFTqqhweOmQ3fKG9AvpyyiFzVEjvRFc5us0wKBgEyl0DlaUSPkytkCKkdZfV+s3Efc9+XBvEHHhTCYAfOWBBNXi/8id+xhB66hERssFMcAhSaJ8P2DqzWJHbmYNGDbX/Ix1teWg6gsGlbdO78/E8b/RhyU1aFtfuJLlfDSDP01DePUz4WWe41I97GQVSNRl0feNfjHxaKsgad4QP9hAoGAaZLsYQlJflrmR8rHmHKImUzeAXmDxHROAJSd1NIUBXs23yLdxpLQw0LVS6J7gZInj8fDwq4tT4MDwuz+0RJMVOiP/WWAaNplL8vN1f7Kc6nIgFFD/VxAGAbQwSh7hX+tt5P1vi7ekrHx97TkR9zoG3pGV9xYkjBQCnQQ6NrnAIMCgYEAw7Kb5M8ptaM+IQ7hy9qSFSVxlq1J2WdsmIHsgpmEXJ0B4Ym7SzAO+yGHDCiBNKpVamdEfe+H5T2808t12CZZi2uSVs/whpK00WIPTFNoIMk1/n0zLnIYzWYkVR0IlXqDnY9fLZ2Fns1RAIJArjIN9PrGbuX3oCPUZmpMDFAKQwA="
+    AppPublicCertPath="/configs/cert/appCertPublicKey_2021003120630657.crt"
+    AlipayRootCertPath="/configs/cert/alipayRootCert.crt"
+    AlipayPublicPath= "/configs/cert/alipayCertPublicKey_RSA2.crt"
+    NotifyUrl = "http://116.63.172.191:18080/api/pay/aliNotify"
+    ReturnUrl="http://asset.xn--7stx85c88r.com/orders"
+    SignType = "RSA2"
+    CharSet="UTF-8"
+    IsProd = true
+
+[wxpay]
+    Appid="wx4a39cc5332bd7bb9"
+    PrivateKey= "0fc4abdb8e5f53e707f62b5ee2a5aa2b"
+    MiniAppId=""
+    AppAppId="wx5f1e4905c538a729"
+    MchId= "1591872021"
+    MchKey= "jsdoo163jsdoo163jsdoo163jsdoo163"
+    NotifyUrl = "http://116.63.172.191:18080/api/pay/notify"
+    ReturnUrl=""
+    IsProd = true
+[rabbitMq]
+    Host="127.0.0.1"
+    Port=5672
+    Username="guest"
+    Password="guest"
+
