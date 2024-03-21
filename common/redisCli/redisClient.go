@@ -22,6 +22,8 @@ type Repo interface {
 	Incr(key string) int64
 	Close() error
 	Version() string
+	LimitCount(keys string, maxTodayCount int) (bool, error)
+	LimitAmount(keys string) (int, error)
 }
 
 type cacheRepo struct {
@@ -143,4 +145,43 @@ func (c *cacheRepo) Version() string {
 	spl2 := strings.Split(spl1[1], "redis_version:")
 	spl3 := strings.Split(spl2[1], "redis_git_sha1:")
 	return spl3[0]
+}
+
+// 限制单位时间内的次数
+func (c *cacheRepo) LimitCount(keys string, maxTodayCount int) (bool, error) {
+
+	key := "hk_storage:" + keys + ":" + time.Now().Format("2006-01-02")
+	val, err := c.client.Get(key).Int()
+	if err != nil && err != redis.Nil {
+		return false, err
+	}
+
+	if err == redis.Nil {
+		_, err := c.client.Set(key, 1, 24*time.Hour).Result()
+		if err != nil {
+			return false, err
+		}
+	} else {
+		if val >= maxTodayCount {
+			return false, nil // 今天已达到最大登录次数
+		}
+		_, err := c.client.Incr(key).Result()
+		if err != nil {
+			return false, err
+		}
+	}
+
+	return true, nil // 未达到限制次数
+}
+
+// 限制单位时间内的次数
+func (c *cacheRepo) LimitAmount(keys string) (int, error) {
+
+	key := "hk_storage:" + keys + ":" + time.Now().Format("2006-01-02")
+	val, err := c.client.Get(key).Int()
+	if err != nil && err != redis.Nil {
+		return 0, err
+	}
+
+	return val, nil // 未达到限制次数
 }

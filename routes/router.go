@@ -28,6 +28,8 @@ func InitRouter(engine *gin.Engine) {
 		sysGroup.POST("/draw/ylem", sysUser.DrawYlem)
 		sysGroup.POST("/coin/pay", payCon.PayBaseCoin)
 		sysGroup.DELETE("/delete/file", sysUser.DeleteUserFile)
+		sysGroup.POST("/water/tap", sysUser.WaterTap)
+		sysGroup.POST("/draw/surplus", sysUser.GetDrawSurplusQuantity)
 		//sysGroup.GET("/sendMsg", smsCon.SendMsg)
 	}
 

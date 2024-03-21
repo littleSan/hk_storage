@@ -64,6 +64,8 @@ const (
 	FileAmountErr           = 400420
 	FileNotExist            = 400421
 	FileStatusErr           = 400422
+	YLemReceived            = 400423
+	YLemMaxLimitErr         = 400424
 )
 
 func Text(language string, code int) string {

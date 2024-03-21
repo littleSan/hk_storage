@@ -12,6 +12,7 @@ import (
 	"github.com/shopspring/decimal"
 	"hk_storage/common/logger"
 	"hk_storage/common/pages"
+	"hk_storage/common/redisCli"
 	"hk_storage/common/response"
 	"hk_storage/core/configs"
 	"hk_storage/models/studyFile"
@@ -36,6 +37,8 @@ type Controller interface {
 	SaveUserFile(ctx *gin.Context)
 	DeleteUserFile(ctx *gin.Context)
 	DrawYlem(ctx *gin.Context)
+	WaterTap(ctx *gin.Context)
+	GetDrawSurplusQuantity(ctx *gin.Context)
 }
 type LoginVo struct {
 	Account string `json:"account,omitempty" form:"account"`
@@ -47,6 +50,7 @@ type controller struct {
 	SysUser      sysUser.Service
 	IpfsService  ipfs.Service
 	StudyService StudyFile.Service
+	RedisCli     redisCli.Repo
 }
 
 func New() *controller {
@@ -54,6 +58,7 @@ func New() *controller {
 		SysUser:      sysUser.New(),
 		IpfsService:  ipfs.New(),
 		StudyService: StudyFile.New(),
+		RedisCli:     redisCli.New(),
 	}
 }
 
@@ -240,6 +245,82 @@ func (c *controller) DrawYlem(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, response.Failure(ctx, response.AddressFormatErr))
 		return
 	}
+	//通过redis 控制一天限制领取次数
+	b1, _ := c.RedisCli.LimitCount(cc.Uid, 20)
+	if !b1 {
+		logger.Info("积分已领取")
+		ctx.JSON(http.StatusOK, response.Failure(ctx, response.YLemMaxLimitErr))
+		return
+	}
+	//生成转让金额
+	rand := randomUtils.GetRandomIn1000()
+	am1 := ethutil.ToWei(decimal.NewFromInt(int64(rand)), 15)
+	logger.Info("打款金额{}", am1)
+	hash, err := chainUtil.TransCoin(configs.TomlConfig.Chain.BaseAddress, cc.Address, configs.TomlConfig.Chain.BaseAddressKey, am1)
+	if err != nil {
+		ctx.JSON(http.StatusOK, response.Failure(ctx, response.Fail))
+		return
+	}
+	ctx.JSON(http.StatusOK, response.SUCCESS(ctx, hash))
+	return
+}
+func (c *controller) GetDrawSurplusQuantity(ctx *gin.Context) {
+	infos := &LoginVo{}
+	err := ctx.BindJSON(infos)
+	if err != nil {
+		logger.Info("登陆参数错误", err)
+		ctx.JSON(http.StatusOK, response.Failure(ctx, response.ParamError))
+		return
+	}
+	cc, err := c.SysUser.GetUserInfoByUid(infos.Uid)
+	if err != nil {
+		logger.Info("未查询到用户信息")
+		ctx.JSON(http.StatusOK, response.Failure(ctx, response.AccountError))
+		return
+	}
+	if len(cc.Address) == 42 && cc.Address[:2] == "0x" {
+
+	} else {
+		logger.Info("地址错误")
+		ctx.JSON(http.StatusOK, response.Failure(ctx, response.AddressFormatErr))
+		return
+	}
+	//通过redis 控制一天限制领取次数
+	b1, _ := c.RedisCli.LimitAmount(cc.Uid)
+	ctx.JSON(http.StatusOK, response.SUCCESS(ctx, b1))
+	return
+}
+
+func (c *controller) WaterTap(ctx *gin.Context) {
+	infos := &LoginVo{}
+	err := ctx.BindJSON(infos)
+	if err != nil {
+		logger.Info("登陆参数错误", err)
+		ctx.JSON(http.StatusOK, response.Failure(ctx, response.ParamError))
+		return
+	}
+	cc, err := c.SysUser.GetUserInfoByUid(infos.Uid)
+	if err != nil {
+		logger.Info("未查询到用户信息")
+		ctx.JSON(http.StatusOK, response.Failure(ctx, response.AccountError))
+		return
+	}
+
+	if len(cc.Address) == 42 && cc.Address[:2] == "0x" {
+
+	} else {
+		logger.Info("地址错误")
+		ctx.JSON(http.StatusOK, response.Failure(ctx, response.AddressFormatErr))
+		return
+	}
+	//通过redis 控制一天只能领一次
+	b1, _ := c.RedisCli.LimitCount(cc.Address, 1)
+	if !b1 {
+		logger.Info("积分已领取")
+		ctx.JSON(http.StatusOK, response.Failure(ctx, response.YLemReceived))
+		return
+	}
+
 	//生成转让金额
 	rand := randomUtils.GetRandomIn1000()
 	am1 := ethutil.ToWei(decimal.NewFromInt(int64(rand)), 15)
