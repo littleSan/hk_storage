@@ -54,6 +54,7 @@ func (s *service) Upload(header *multipart.FileHeader) (rest string, err error) 
 
 	// Close the writer and get the content type based on the writer's headers
 	writer.Close()
+	fmt.Println("数据大小", body.Len())
 	contentType := writer.FormDataContentType()
 	req, err := http.NewRequest("POST", configs.TomlConfig.Ipfs.UploadUrl, body)
 	if err != nil {
@@ -61,9 +62,10 @@ func (s *service) Upload(header *multipart.FileHeader) (rest string, err error) 
 	}
 	req.Header.Set("Content-Type", contentType)
 	req.Header.Set("Authorization", configs.TomlConfig.Ipfs.Authorization)
-	// 发送请求并获取响应
+
 	client := &http.Client{
-		Timeout: 120 * time.Second,
+		//Transport: &transport,
+		Timeout: 0,
 	}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -74,6 +76,7 @@ func (s *service) Upload(header *multipart.FileHeader) (rest string, err error) 
 	// 处理响应
 	fmt.Println(resp.Status)
 	data, err := ioutil.ReadAll(resp.Body)
+	fmt.Println("response data{}", string(data))
 	if err != nil {
 		return "", err
 	}

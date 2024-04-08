@@ -18,6 +18,7 @@ import (
 	"hk_storage/models/contract"
 	"hk_storage/models/studyFile"
 	"hk_storage/utils/chainUtil"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -86,7 +87,12 @@ func ChainPayConfirm(hash string) {
 
 func PaySuccess(hash string) {
 	res, _ := StudyService.GetFileByPayHash(hash)
+	//获取用户上传数据,生成json数据，保存记录
+	json := map[string]interface{}{"name": res.Name, "image": res.Url, "description": res.Description,
+		"attributes": []map[string]interface{}{{"trait_type": "owner", "value": res.Address}}}
+	jsonStr, _ := IpfsService.UploadJson(json, strconv.Itoa(int(time.Now().Unix())))
 	res.Status = studyFile.StatusPaySuccess
+	res.JsonUrl = jsonStr
 	StudyService.Update(*res)
 	//付款成功，进行上链操作
 	c1 := &contract.Contract{}

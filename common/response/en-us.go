@@ -26,6 +26,6 @@ var enUSText = map[int]string{
 	FileAmountErr:           "file amount err",
 	FileNotExist:            "file not exist",
 	FileStatusErr:           "file status err",
-	YLemReceived:            "Points have been claimed",
+	YLemReceived:            "have been claimed",
 	YLemMaxLimitErr:         "The maximum limit for today's collection has been reached",
 }

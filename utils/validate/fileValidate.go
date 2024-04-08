@@ -14,7 +14,7 @@ import (
 // / 文件校验
 var IMGAllow = "jpg,jpeg,png,gif,bmp,webp,pdf,tiff,psd,dds,pdt,webp,xmp,svg,pdd,raw,cr2"
 var VideoAllow = "avi,wmv,mpeg,mp4,flv,mov,mkv,webm,f4v,avchd,dat,mod"
-var FileAllow = "zip,doc,docx,json,txt,xlsx,pdf,xls,rar,pptx,csv"
+var FileAllow = "zip,doc,docx,json,txt,xlsx,pdf,xls,rar,pptx,csv,fbx"
 
 var TotalAllow = IMGAllow + "," + FileAllow + "," + VideoAllow
 var ImageMaxSize = 30 << 20
@@ -33,10 +33,10 @@ func FileValidate(fi multipart.FileHeader, typeAllow string, maxSize int64) bool
 func FilesValidate(fi []*multipart.FileHeader, typeAllow string, maxSize int64) bool {
 	var sizeTotal int64
 	for _, f := range fi {
-		names := f.Filename
-		if !prefix(names, typeAllow) {
-			return false
-		}
+		//names := f.Filename
+		//if !prefix(names, typeAllow) {
+		//	return false
+		//}
 		sizeTotal += f.Size
 	}
 	return sizeTotal != 0 && sizeTotal <= maxSize

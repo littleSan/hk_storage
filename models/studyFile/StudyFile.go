@@ -14,6 +14,7 @@ const (
 	StatusToChain = 1
 	//付款成功
 	StatusPaySuccess = 2
+
 	//付款失败
 	StatusPayFail = 3
 
@@ -28,6 +29,8 @@ const (
 
 	//删除
 	StatusDelete = 7
+	//付款中
+	StatusPaying = 8
 )
 
 type StudyFile struct {
@@ -44,7 +47,7 @@ type StudyFile struct {
 	Hash         string `json:"hash,omitempty" gorm:"column:hash" form:"hash"`
 	PayHash      string `json:"payHash,omitempty" gorm:"column:pay_hash" form:"payHash"` /*付款hash*/
 	CreateTime   uint64 `json:"createTime,omitempty" gorm:"column:create_time" form:"createTime"`
-	Status       uint   `json:"status,omitempty" gorm:"column:status" form:"status"`
+	Status       uint   `json:"status,omitempty" gorm:"column:status" form:"status"` /*1 待上链 2 付款成功 3付款失败 4 上链中 5 上链成功 6 上链失败 7  删除*/
 }
 
 type Dao interface {

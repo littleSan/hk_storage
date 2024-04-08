@@ -17,11 +17,13 @@ import (
 	"hk_storage/common/rabbitMq/sendMq"
 	"hk_storage/models/studyFile"
 	"hk_storage/services/StudyFile"
+	"hk_storage/services/ipfs"
 	"strings"
 	"time"
 )
 
 var StudyService = StudyFile.New()
+var IpfsService = ipfs.New()
 
 // 接受数据
 func ReceiveMsg(queueName string) {

@@ -25,6 +25,6 @@ var zhCNText = map[int]string{
 	FileAmountErr:           "文件数量错误",
 	FileNotExist:            "文件不存在",
 	FileStatusErr:           "文件状态值错误",
-	YLemReceived:            "积分已领取",
+	YLemReceived:            "今日已领取",
 	YLemMaxLimitErr:         "今日领取已达上限",
 }

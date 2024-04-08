@@ -174,7 +174,8 @@ func (c *controller) PayBaseCoin(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, response.Failure(ctx, response.ParamError))
 		return
 	}
-	if file.Status != studyFile.StatusToChain {
+	
+	if file.Status != studyFile.StatusToChain && file.Status != studyFile.StatusPayFail {
 		logger.Info("支付状态错误")
 		ctx.JSON(http.StatusOK, response.Failure(ctx, response.PayStatusErr))
 		return
@@ -208,6 +209,7 @@ func (c *controller) PayBaseCoin(ctx *gin.Context) {
 		return
 	}
 	file.PayHash = payHash
+	file.Status = studyFile.StatusPaying
 	c.StudyFileService.Update(*file)
 	//查询支付结果，支付成功，进行上链操作
 	sendMq.SendMsg(queueConst.ChainPayQueue, payHash)

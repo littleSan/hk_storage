@@ -23,9 +23,7 @@ import (
 	"hk_storage/utils/ethutil"
 	"hk_storage/utils/randomUtils"
 	"net/http"
-	"strconv"
 	"strings"
-	"time"
 )
 
 var _ Controller = (*controller)(nil)
@@ -156,28 +154,6 @@ func (c *controller) SaveUserFile(ctx *gin.Context) {
 	infos.Status = studyFile.StatusToChain
 	infos.Token = randomUtils.GenerateDefaultRandomNumber()
 	c.StudyService.Save(infos)
-	//获取用户上传数据,生成json数据，保存记录
-	go func() {
-		json := map[string]interface{}{"name": infos.Name, "image": infos.Url, "description": infos.Description,
-			"attributes": []map[string]interface{}{{"trait_type": "owner", "value": infos.Address}}}
-		jsonStr, _ := c.IpfsService.UploadJson(json, strconv.Itoa(int(time.Now().Unix())))
-		infos.JsonUrl = jsonStr
-
-		//c1 := &contract.Contract{}
-		//c1.Type = "storage"
-		//c1.GetInfo()
-		//hash, err := chainUtil.Mint(c1, "mint", float64(infos.Token), jsonStr, cc.Address, cc.PriKey)
-		//if err != nil {
-		//	logger.Info("上链操作失败", err)
-		//	ctx.JSON(http.StatusOK, response.Failure(ctx, response.Fail))
-		//	return
-		//}
-		//infos.Status = studyFile.StatusChaining
-		//infos.ContractAddr = c1.Address
-		//infos.Hash = hash
-		c.StudyService.Update(*infos)
-		//sendMq.SendMsg(queueConst.ChainQueue, hash)
-	}()
 	ctx.JSON(http.StatusOK, response.SUCCESS(ctx, infos))
 	return
 }
@@ -213,7 +189,8 @@ func (c *controller) DeleteUserFile(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, response.Failure(ctx, response.AddressFormatErr))
 		return
 	}
-	if files.Status != studyFile.StatusToChain {
+
+	if files.Status != studyFile.StatusToChain && files.Status != studyFile.StatusPayFail {
 		logger.Info("文件状态值错误")
 		ctx.JSON(http.StatusOK, response.Failure(ctx, response.FileStatusErr))
 		return
@@ -261,7 +238,7 @@ func (c *controller) DrawYlem(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, response.Failure(ctx, response.Fail))
 		return
 	}
-	ctx.JSON(http.StatusOK, response.SUCCESS(ctx, hash))
+	ctx.JSON(http.StatusOK, response.SUCCESS(ctx, map[string]interface{}{"hash": hash, "amount": ethutil.ToDecimal(am1, 18)}))
 	return
 }
 func (c *controller) GetDrawSurplusQuantity(ctx *gin.Context) {
@@ -322,14 +299,14 @@ func (c *controller) WaterTap(ctx *gin.Context) {
 	}
 
 	//生成转让金额
-	rand := randomUtils.GetRandomIn1000()
-	am1 := ethutil.ToWei(decimal.NewFromInt(int64(rand)), 15)
+	//rand := randomUtils.GetRandomIn1000()
+	am1 := ethutil.ToWei(decimal.NewFromInt(int64(1)), 18)
 	logger.Info("打款金额{}", am1)
 	hash, err := chainUtil.TransCoin(configs.TomlConfig.Chain.BaseAddress, cc.Address, configs.TomlConfig.Chain.BaseAddressKey, am1)
 	if err != nil {
 		ctx.JSON(http.StatusOK, response.Failure(ctx, response.Fail))
 		return
 	}
-	ctx.JSON(http.StatusOK, response.SUCCESS(ctx, hash))
+	ctx.JSON(http.StatusOK, response.SUCCESS(ctx, map[string]interface{}{"hash": hash, "amount": ethutil.ToDecimal(am1, 18)}))
 	return
 }
