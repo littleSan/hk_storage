@@ -22,8 +22,9 @@ import (
 )
 
 type storageResponse struct {
-	Ok    bool                   `json:"ok"`
-	Value map[string]interface{} `json:"value"`
+	Ok       bool                   `json:"ok"`
+	Value    map[string]interface{} `json:"value"`
+	IpfsHash string                 `json:"IpfsHash"`
 }
 type storageFile struct {
 	Name string `json:"name"`
@@ -76,7 +77,7 @@ func (s *service) Upload(header *multipart.FileHeader) (rest string, err error) 
 	// 处理响应
 	fmt.Println(resp.Status)
 	data, err := ioutil.ReadAll(resp.Body)
-	fmt.Println("response data{}", string(data))
+	fmt.Println("response data{%V}", string(data))
 	if err != nil {
 		return "", err
 	}
@@ -86,9 +87,16 @@ func (s *service) Upload(header *multipart.FileHeader) (rest string, err error) 
 		logger.Info("解析IPfs 返回数据出错", err)
 		return string(data), err
 	}
+	if strings.Contains(configs.TomlConfig.Ipfs.UploadUrl, "pinata") {
+		cid := fmt.Sprintf("%v", response.IpfsHash)
+		rest = configs.TomlConfig.Ipfs.IpfsUrl + cid
+		return rest, err
+	}
+	//nftstorage 情况
 	cid := fmt.Sprintf("%v", response.Value["cid"])
+
 	files := []storageFile{}
-	//fileStr := fmt.Sprintf("%v", response.Value["files"])
+
 	data, err = json.Marshal(response.Value["files"])
 	err = json.Unmarshal(data, &files)
 	if err != nil {
@@ -154,21 +162,21 @@ func (s *service) UploadJson(obj interface{}, fileName string) (rest string, err
 		logger.Info("解析IPfs 返回数据出错", err)
 		return string(data), err
 	}
-	cid := fmt.Sprintf("%v", response.Value["cid"])
-	files := []storageFile{}
-	//fileStr := fmt.Sprintf("%v", response.Value["files"])
-	data, err = json.Marshal(response.Value["files"])
-	err = json.Unmarshal(data, &files)
-	if err != nil {
-		logger.Info("解析file 出错", err)
-		return "", err
-	}
-
-	for _, s2 := range files {
-		logger.Info("ipfs 文件上传名称", s2.Name)
-		fileName = s2.Name
-	}
-	rest = configs.TomlConfig.Ipfs.IpfsUrl + cid + "/" + fileName
+	cid := fmt.Sprintf("%v", response.IpfsHash)
+	//files := []storageFile{}
+	////fileStr := fmt.Sprintf("%v", response.Value["files"])
+	//data, err = json.Marshal(response.Value["files"])
+	//err = json.Unmarshal(data, &files)
+	//if err != nil {
+	//	logger.Info("解析file 出错", err)
+	//	return "", err
+	//}
+	//
+	//for _, s2 := range files {
+	//	logger.Info("ipfs 文件上传名称", s2.Name)
+	//	fileName = s2.Name
+	//}
+	rest = configs.TomlConfig.Ipfs.IpfsUrl + cid
 	return rest, err
 
 }
