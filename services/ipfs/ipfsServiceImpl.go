@@ -162,6 +162,11 @@ func (s *service) UploadJson(obj interface{}, fileName string) (rest string, err
 		logger.Info("解析IPfs 返回数据出错", err)
 		return string(data), err
 	}
+	if strings.Contains(configs.TomlConfig.Ipfs.UploadUrl, "pinata") {
+		cid := fmt.Sprintf("%v", response.IpfsHash)
+		rest = configs.TomlConfig.Ipfs.IpfsUrl + cid
+		return rest, err
+	}
 	cid := fmt.Sprintf("%v", response.IpfsHash)
 	//files := []storageFile{}
 	////fileStr := fmt.Sprintf("%v", response.Value["files"])
