@@ -89,7 +89,7 @@ func (s *service) Upload(header *multipart.FileHeader) (rest string, err error) 
 	}
 	if strings.Contains(configs.TomlConfig.Ipfs.UploadUrl, "pinata") {
 		cid := fmt.Sprintf("%v", response.IpfsHash)
-		rest = configs.TomlConfig.Ipfs.IpfsUrl + cid
+		rest = configs.TomlConfig.Ipfs.PinataGateWay + cid + configs.TomlConfig.Ipfs.PinataGateWayToken
 		return rest, err
 	}
 	//nftstorage 情况
@@ -164,7 +164,7 @@ func (s *service) UploadJson(obj interface{}, fileName string) (rest string, err
 	}
 	if strings.Contains(configs.TomlConfig.Ipfs.UploadUrl, "pinata") {
 		cid := fmt.Sprintf("%v", response.IpfsHash)
-		rest = configs.TomlConfig.Ipfs.IpfsUrl + cid
+		rest = configs.TomlConfig.Ipfs.PinataGateWay + cid + configs.TomlConfig.Ipfs.PinataGateWayToken
 		return rest, err
 	}
 	cid := fmt.Sprintf("%v", response.IpfsHash)

@@ -79,9 +79,11 @@ type aliOss struct {
 }
 
 type ipfs struct {
-	UploadUrl     string
-	Authorization string
-	IpfsUrl       string
+	UploadUrl          string
+	Authorization      string
+	IpfsUrl            string
+	PinataGateWay      string
+	PinataGateWayToken string
 }
 type alipay struct {
 	Appid              string
